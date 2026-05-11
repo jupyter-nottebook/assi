@@ -82,7 +82,7 @@ plt.show()
 #	5.	Pie	chart
 co_counts	=	df['CO(GT)'].value_counts().nlargest(5)
 plt.figure(figsize=(6,	6))
-co_counts.plot.pie(autopct='%1.1f%%',	colors=["skyblue",	"lightcoral",	"gold",	"lightgreen",	"violet"],	startangle=
+co_counts.plot.pie(autopct='%1.1f%%', colors=["skyblue", "lightcoral", "gold", "lightgreen", "violet"], startangle=90)
 plt.title("CO	Levels	Distribution")
 plt.ylabel("")
 plt.show()
