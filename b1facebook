@@ -1,0 +1,67 @@
+import	pandas	as	pd
+import	matplotlib.pyplot	as	plt
+
+fb_data	=	pd.read_csv(r"C:\TE	Year\2nd	sem\practicals\dsbdal\facebook_dataset.csv")
+print("Preview:")
+print(fb_data.head())
+
+#SubsetCreation	
+#	Subset	1:	User	Profile	Info
+profile_data	=	fb_data[['userid','age','gender','tenure']]
+#	Subset	2:	Social	Activity
+activity_data	=	fb_data[['friend_count','friendships_initiated']]
+#	Subset	3:	Engagement	Metrics
+engagement_data	=	fb_data[['likes','likes_received','mobile_likes','www_likes']]
+
+print("\nProfile	Data:")
+print(profile_data.head())
+print("\nActivity	Data:")
+print(activity_data.head())
+print("\nEngagement	Data:")
+print(engagement_data.head())
+
+#Merge	Subsets
+combined_data	=	pd.concat([profile_data,	activity_data,	engagement_data],	axis=1)
+print("\nCombined	Data:")
+print(combined_data.head())
+
+#Sorting
+sorted_fb	=	fb_data.sort_values(by='friend_count',	ascending=False)
+print("\nTop	Users	by	Friend	Count:")
+print(sorted_fb[['userid',	'friend_count']].head())
+
+#	Transpose
+print("\nTranspose	of	Activity	Data:")
+print(activity_data.T)
+
+#	Reshaping
+melted_fb	=	pd.melt(fb_data,id_vars='gender',value_vars=['likes','likes_received'],var_name='Type',value_name='Count'
+print("\nMelted	Data:")
+print(melted_fb.head())
+
+#Graph
+#	Friend	count	distribution
+plt.figure()
+fb_data['friend_count'].hist()
+plt.title("Distribution	of	Friend	Count")
+plt.xlabel("Friend	Count")
+plt.ylabel("Frequency")
+plt.show()
+
+#	Extra
+#	Missing	values
+print("\nMissing	Values:")
+print(fb_data.isnull().sum())
+
+#	Remove	duplicates
+fb_clean	=	fb_data.drop_duplicates()
+print(f"\nDuplicates	removed:	{len(fb_data)	-	len(fb_clean)}")
+
+#	Correlation
+print("\nCorrelation	Matrix:")
+print(fb_data.select_dtypes(include='number').corr())
+
+
+
+
+
