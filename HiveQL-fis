@@ -1,0 +1,100 @@
+
+hive
+
+create database mydb2;
+use mydb2;
+
+create table flight(fno int, year int, dest varchar(10), delay float);
+
+alter table flight rename to air_flight;
+
+
+-- ─────────────────────────────────────────────
+--  STEP 2: Add Column, Drop Table, Describe
+-- ─────────────────────────────────────────────
+alter table air_flight add columns(source varchar(10));
+
+drop table flight;
+
+desc air_flight;
+
+
+-- ─────────────────────────────────────────────
+--  STEP 3: Recreate Table with CSV Format
+-- ─────────────────────────────────────────────
+create table flight(fno int, year int, dest varchar(10), delay float)
+  row format delimited
+  fields terminated by ','
+  lines terminated by '\n'
+  stored as textfile;
+
+
+-- ─────────────────────────────────────────────
+--  STEP 4: Insert Rows & Select
+-- ─────────────────────────────────────────────
+insert into flight values(123, 2009, "mumbai", 30.6);
+insert into flight values(124, 2008, "pune",   50.6);
+
+select * from flight;
+
+
+-- ─────────────────────────────────────────────
+--  STEP 5 & 6: Create f.txt (run in terminal, NOT in Hive)
+-- ─────────────────────────────────────────────
+-- $ gedit f.txt
+--
+-- Paste this inside f.txt and save:
+--   923,2009,navi mumbai,60.0
+--   156,2009,kolhapur,78.0
+--   112,2009,punr,0.0
+--   322,2008,nagpur,90.0
+--   132,2008,aurngabad,67.0
+
+
+-- ─────────────────────────────────────────────
+--  STEP 7: Load f.txt into Table
+-- ─────────────────────────────────────────────
+load data local inpath "f.txt"
+  overwrite into table flight;
+
+
+-- ─────────────────────────────────────────────
+--  STEP 8: Select After Load (verify 5 rows)
+-- ─────────────────────────────────────────────
+select * from flight;
+
+
+-- ─────────────────────────────────────────────
+--  STEP 9: Create nflight Table
+-- ─────────────────────────────────────────────
+create table nflight(fno int, year int, source varchar(10))
+  row format delimited
+  fields terminated by ','
+  lines terminated by '\n'
+  stored as textfile;
+
+select * from flight;
+
+
+-- ─────────────────────────────────────────────
+--  STEP 10: Insert into nflight
+-- ─────────────────────────────────────────────
+insert into nflight values(923, 2009, "pune");
+
+
+-- ─────────────────────────────────────────────
+--  STEP 11: JOIN flight and nflight
+-- ─────────────────────────────────────────────
+select a.fno, a.year, a.dest, a.delay, b.source
+  from flight a join nflight b
+  on(a.fno = b.fno);
+
+
+-- ─────────────────────────────────────────────
+--  STEP 12: Create Index on flight(fno)
+-- ─────────────────────────────────────────────
+create index flight_index on table flight(fno)
+  as 'org.apache.hadoop.hive.ql.index.compact.CompactIndexHandler'
+  with deferred rebuild;
+
+show tables;
