@@ -1,0 +1,60 @@
+!pip	install	selenium
+
+!pip	install	beautifulsoup4
+
+import	sys
+!{sys.executable}	-m	pip	install	selenium	beautifulsoup4
+
+from	selenium	import	webdriver
+from	bs4	import	BeautifulSoup
+import	time
+driver	=	webdriver.Chrome()
+url	=	"https://www.ebay.com/p/12054471855?iid=276646642466"
+driver.get(url)
+time.sleep(6)		#	wait	for	JS	to	Load
+soup	=	BeautifulSoup(driver.page_source,	"html.parser")
+reviews	=	soup.find_all("li",	class_="x-review-section")
+print("Total	Reviews	Found:",	len(reviews))
+for	review	in	reviews:
+    try:
+        author	=	review.select_one(".x-review-section__author	a")
+        author_name	=	author.text.strip()	if	author	else	"N/A"
+        rating	=	review.select_one(".star-rating")
+        rating_value	=	rating.get("data-stars")	if	rating	else	"N/A"
+        content	=	review.select_one(".x-review-section_content	span")
+        review_text	=	content.text.strip()	if	content	else	"N/A"
+        print(f"	{author_name}")
+        print(f"	{rating_value}")
+        print(f"	{review_text}")
+        print("-"	*	50)
+    except:
+        continue
+driver.quit()
+
+driver	=	webdriver.Chrome()
+url	=	"https://www.ebay.com/p/7035164874?iid=227070169730"
+driver.get(url)
+time.sleep(6)		#	wait	for	JS	to	Load
+soup	=	BeautifulSoup(driver.page_source,	"html.parser")
+reviews	=	soup.find_all("li",	class_="x-review-section")
+print("Total	Reviews	Found:",	len(reviews))
+for	review	in	reviews:
+    try:
+        author	=	review.select_one(".x-review-section__author	a")
+        author_name	=	author.text.strip()	if	author	else	"N/A"
+        rating	=	review.select_one(".star-rating")
+        rating_value	=	rating.get("data-stars")	if	rating	else	"N/A"
+        content	=	review.select_one(".x-review-section_content	span")
+        review_text	=	content.text.strip()	if	content	else	"N/A"
+        print(f"	{author_name}")
+        print(f"	{rating_value}")
+        print(f"	{review_text}")
+        print("-"	*	50)
+    except:
+        continue
+driver.quit()
+
+avg_rating_tag	=	soup.select_one(".ux-summary__start--rating	span")
+avg_rating	=	avg_rating_tag.text.strip()	if	avg_rating_tag	else	"N/A"
+print("	Average	Rating:",	avg_rating)
+print("="	*	50)
